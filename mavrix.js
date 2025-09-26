@@ -1,18 +1,16 @@
-// Railway deployment compatibility
-const IS_RAILWAY = process.env.RAILWAY_ENVIRONMENT_NAME !== undefined;
+// Render deployment compatibility
+const IS_RENDER = process.env.RENDER === 'true';
 const PORT = process.env.PORT || 3000;
 
-// Add HTTP server for Railway
-if (IS_RAILWAY) {
-    const http = require('http');
-    const server = http.createServer((req, res) => {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('🤖 MAVRIX AI Bot is running on Railway...\n');
-    });
-    server.listen(PORT, () => {
-        console.log(`🚀 MAVRIX Bot running on Railway (Port: ${PORT})`);
-    });
-}
+// Add HTTP server for Render (ALWAYS RUNNING)
+const http = require('http');
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('🤖 MAVRIX AI Bot is running on Render...\n');
+});
+server.listen(PORT, () => {
+    console.log(`🚀 MAVRIX Bot running on Render (Port: ${PORT})`);
+});
 
 // MAVRIX BOT - AI PROFESSIONAL VERSION
 console.log('🚀 Starting MAVRIX Bot - AI Professional Edition');
@@ -35,15 +33,25 @@ const fs = require('fs').promises;
 const path = require('path');
 const os = require('os');
 
-// MAVRIX Bot Configuration - Railway compatible
+// FIX: Simple logger to avoid Baileys compatibility issues
+const simpleLogger = {
+    level: 'silent',
+    trace: () => {},
+    debug: () => {},
+    info: () => {},
+    warn: () => {},
+    error: () => {},
+    fatal: () => {}
+};
+
+// MAVRIX Bot Configuration - Render compatible
 const CONFIG = {
-    name: process.env.BOT_NAME || "MAVRIX AI Bot",
-    version: process.env.BOT_VERSION || "4.0.0",
+    name: "MAVRIX AI Bot",
+    version: "4.0.0",
     owner: "Marvex18",
-    prefix: process.env.BOT_PREFIX || ".",
+    prefix: ".",
     sessionPath: "./mavrix_session",
-    // Railway-compatible QR path
-    qrPath: IS_RAILWAY ? path.join(os.tmpdir(), 'mavrix_qr.png') : "/storage/emulated/0/RhoXi Teams/mavrix_qr.png"
+    qrPath: IS_RENDER ? path.join(os.tmpdir(), 'mavrix_qr.png') : "/storage/emulated/0/RhoXi Teams/mavrix_qr.png"
 };
 
 console.log(`
@@ -77,8 +85,8 @@ class MavrixBot {
             await fs.mkdir(qrDir, { recursive: true });
             
             console.log('✅ System directories initialized');
-            if (IS_RAILWAY) {
-                console.log('🌐 Running on Railway cloud platform');
+            if (IS_RENDER) {
+                console.log('🌐 Running on Render cloud platform');
             }
         } catch (error) {
             console.log('Directory setup:', error.message);
@@ -114,7 +122,7 @@ class MavrixBot {
         this.addCommand('status', this.botStatus.bind(this));
         this.addCommand('help', this.showHelp.bind(this));
         this.addCommand('getqr', this.getQRCode.bind(this));
-        this.addCommand('railway', this.railwayStatus.bind(this));
+        this.addCommand('render', this.renderStatus.bind(this));
 
         console.log(`✅ Loaded ${this.commands.size} professional features`);
     }
@@ -131,7 +139,7 @@ class MavrixBot {
                 auth: state,
                 printQRInTerminal: true,
                 browser: Browsers.ubuntu('Chrome'),
-                logger: IS_RAILWAY ? undefined : { level: 'silent' }
+                logger: simpleLogger  // FIX: Use simple logger instead of undefined
             });
 
             this.setupEventHandlers(saveCreds);
@@ -195,8 +203,8 @@ class MavrixBot {
             });
             
             console.log(`✅ QR code saved at: ${CONFIG.qrPath}`);
-            if (IS_RAILWAY) {
-                console.log('🌐 Running on Railway - Use .getqr command in WhatsApp');
+            if (IS_RENDER) {
+                console.log('🌐 Running on Render - Use .getqr command in WhatsApp');
             } else {
                 console.log('📱 Open your gallery or file manager to scan it');
             }
@@ -235,7 +243,7 @@ class MavrixBot {
 ║               by Marvex18                ║
 ╚══════════════════════════════════════════╝
 
-🌐 Deployment: ${IS_RAILWAY ? 'Railway Cloud' : 'Local Server'}
+🌐 Deployment: ${IS_RENDER ? 'Render Cloud' : 'Local Server'}
 🤖 AI Features: GPT-4, Image/Video Generation
 🎬 Downloaders: YouTube, Spotify, Pinterest
 📊 Documents: PDF, Conversion Tools
@@ -294,7 +302,7 @@ class MavrixBot {
                     caption: `📱 MAVRIX AI Bot - Scan QR Code\n\n` +
                             `Owner: Marvex18\n` +
                             `GitHub: github.com/Marvex18/mavrix-bot\n` +
-                            `Platform: ${IS_RAILWAY ? 'Railway' : 'Local'}`
+                            `Platform: ${IS_RENDER ? 'Render' : 'Local'}`
                 });
                 await this.sendMessage(sender, '✅ QR code sent! Scan it in WhatsApp → Settings → Linked Devices');
             } catch (error) {
@@ -305,22 +313,22 @@ class MavrixBot {
         }
     }
 
-    // Railway Status Command
-    async railwayStatus(sender) {
+    // Render Status Command
+    async renderStatus(sender) {
         const statusMsg = `
-🌐 RAILWAY DEPLOYMENT STATUS
+🌐 RENDER DEPLOYMENT STATUS
 
-✅ Platform: Railway App
+✅ Platform: Render.com
 🔗 GitHub: github.com/Marvex18/mavrix-bot
 📊 Memory: ${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)}MB
 ⏰ Uptime: ${Math.floor(process.uptime() / 3600)}h ${Math.floor((process.uptime() % 3600) / 60)}m
 🚀 Version: ${CONFIG.version}
 
 💡 Features:
-• 24/7 Uptime
-• Auto-restart
-• Free hosting
+• Free tier available
+• Auto-deployment from GitHub
 • SSL secured
+• 24/7 hosting
 
 🔧 by Marvex18
         `;
@@ -340,7 +348,7 @@ class MavrixBot {
             await this.sendMessage(sender, 
                 '✅ AI Response Generated\n\n' +
                 `Question: ${prompt}\n\n` +
-                'Response: This advanced AI response is powered by MAVRIX AI Engine running on Railway cloud platform. The query has been processed through neural networks with contextual understanding.\n\n' +
+                'Response: This advanced AI response is powered by MAVRIX AI Engine running on Render cloud platform. The query has been processed through neural networks with contextual understanding.\n\n' +
                 `✨ MAVRIX AI v${CONFIG.version} by Marvex18`
             );
         }, 2000);
@@ -378,7 +386,7 @@ class MavrixBot {
                 'Specifications:\n' +
                 '• Resolution: 1024x1024px\n' +
                 '• Model: Stable Diffusion XL\n' +
-                '• Platform: Railway Cloud\n' +
+                '• Platform: Render Cloud\n' +
                 '• Quality: Professional grade\n\n' +
                 `📸 MAVRIX Image AI by Marvex18`
             );
@@ -399,7 +407,7 @@ class MavrixBot {
                 'Video Specifications:\n' +
                 '• Duration: 30 seconds\n' +
                 '• Resolution: 1920x1080\n' +
-                '• Platform: Railway Deployment\n' +
+                '• Platform: Render Deployment\n' +
                 '• Format: MP4/H.264\n\n' +
                 `🎥 MAVRIX Video AI by Marvex18`
             );
@@ -419,7 +427,7 @@ class MavrixBot {
                 '✅ Flux AI Image Ready\n\n' +
                 'Technical Details:\n' +
                 '• Model: Flux.1 Dev\n' +
-                '• Platform: Railway Cloud\n' +
+                '• Platform: Render Cloud\n' +
                 '• Architecture: Transformer-based\n' +
                 '• Quality: Professional\n\n' +
                 `🌌 MAVRIX Flux by Marvex18`
@@ -460,7 +468,7 @@ class MavrixBot {
                     `📊 YouTube Audio Analysis:\n` +
                     `Title: ${info.videoDetails.title}\n` +
                     `Duration: ${info.videoDetails.lengthSeconds}s\n` +
-                    `Platform: Railway Cloud\n` +
+                    `Platform: Render Cloud\n` +
                     `Status: Ready for download\n\n` +
                     `🔧 by Marvex18`
                 );
@@ -472,7 +480,7 @@ class MavrixBot {
                         `🔍 Search Results:\n` +
                         `Title: ${video.title}\n` +
                         `Duration: ${video.timestamp}\n` +
-                        `Platform: Railway\n` +
+                        `Platform: Render\n` +
                         `Status: Ready\n\n` +
                         `🔧 by Marvex18`
                     );
@@ -488,7 +496,7 @@ class MavrixBot {
             await this.sendMessage(sender, '❌ Usage: .dlvideo <video name or URL>');
             return;
         }
-        await this.sendMessage(sender, `📹 Video Download: "${query}" - Active on Railway\n\n🔧 by Marvex18`);
+        await this.sendMessage(sender, `📹 Video Download: "${query}" - Active on Render\n\n🔧 by Marvex18`);
     }
 
     async youtubeDownload(sender, url) {
@@ -505,7 +513,7 @@ class MavrixBot {
                 '✅ YouTube Analysis Complete\n\n' +
                 `Title: ${info.videoDetails.title}\n` +
                 `Duration: ${Math.round(info.videoDetails.lengthSeconds/60)}min\n` +
-                `Platform: Railway Deployment\n` +
+                `Platform: Render Deployment\n` +
                 `Quality: 720p MP4 available\n\n` +
                 `🔧 by Marvex18`
             );
@@ -523,7 +531,7 @@ class MavrixBot {
         await this.sendMessage(sender, `🎶 Spotify Processor: ${url}`);
         await this.sendMessage(sender, 
             '🔄 Extracting track information...\n' +
-            '• Platform: Railway Cloud\n' +
+            '• Platform: Render Cloud\n' +
             '• Quality: High fidelity\n' +
             '• Status: Processing\n\n' +
             '🔧 by Marvex18'
@@ -561,7 +569,7 @@ class MavrixBot {
             await this.sendMessage(sender, 
                 '✅ PDF Document Created\n\n' +
                 'Specifications:\n' +
-                '• Platform: Railway Cloud\n' +
+                '• Platform: Render Cloud\n' +
                 '• Format: PDF 1.7\n' +
                 '• Quality: Professional\n' +
                 '• Status: Ready\n\n' +
@@ -593,11 +601,11 @@ DOCUMENT TOOLS:
 
 UTILITIES:
 .status - Bot system status
-.railway - Railway platform info
+.render - Render platform info
 .getqr - Get QR code image
 .help - This help menu
 
-🌐 Deployed on Railway Cloud
+🌐 Deployed on Render Cloud
 💡 Professional AI Tools
         `;
         await this.sendMessage(sender, helpText);
@@ -614,7 +622,7 @@ UTILITIES:
 🔗 GitHub: github.com/Marvex18/mavrix-bot
 
 ✅ System: Operational
-🌐 Platform: ${IS_RAILWAY ? 'Railway Cloud' : 'Local'}
+🌐 Platform: ${IS_RENDER ? 'Render Cloud' : 'Local'}
 🚀 Version: ${CONFIG.version}
 ⏰ Uptime: ${hours}h ${minutes}m
 💾 Memory: ${(process.memoryUsage().rss / 1024 / 1024).toFixed(2)}MB
