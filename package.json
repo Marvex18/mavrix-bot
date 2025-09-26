@@ -1,0 +1,51 @@
+{
+  "name": "mavrix-bot",
+  "version": "4.0.0",
+  "description": "MAVRIX Bot - Professional AI-Powered WhatsApp Assistant by Marvex18 with advanced features including AI chat, media downloads, and document processing",
+  "main": "mavrix.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node mavrix.js",
+    "dev": "node mavrix.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "whatsapp",
+    "ai",
+    "mavrix",
+    "marvex18",
+    "download",
+    "automation",
+    "bot",
+    "assistant",
+    "productivity",
+    "gpt",
+    "youtube",
+    "spotify",
+    "pdf",
+    "railway",
+    "deployment"
+  ],
+  "author": "Marvex18",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Marvex18/mavrix-bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Marvex18/mavrix-bot/issues"
+  },
+  "homepage": "https://github.com/Marvex18/mavrix-bot#readme",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.18",
+    "qrcode-terminal": "^0.12.0",
+    "qrcode": "^1.5.3",
+    "axios": "^1.6.0",
+    "ytdl-core": "^4.11.5",
+    "yt-search": "^2.12.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
+}
