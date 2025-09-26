@@ -1,0 +1,16 @@
+🤖 AI Features:
+.ai <prompt>        - Advanced AI chat
+.gpt <question>     - GPT-4 level responses
+.imagine <desc>     - AI image generation
+.sora <desc>        - AI video generation
+
+🎬 Downloaders:
+.dlaudio <url>      - Audio download
+.dlvideo <url>      - Video download
+.youtube <url>      - YouTube specific
+
+🔧 Utilities:
+.status            - Bot status
+.railway           - Platform info
+.getqr             - Get QR code
+.help              - Show help
